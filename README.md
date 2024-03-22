@@ -3,7 +3,7 @@ A Unix-like operating system make from scratch. This system is a half-semester p
 
 The machine needs to run on QEMU or other x86 stimulators. For an online demo and more information, please refer to https://os391junzhouf.com/ (The website will be maintained until 2026)
 
-Please note: I'm currently a CA of ECE391, and some of our codes were written in a dumb way, i.e. not optimized.  Therefore, I will know if you copy any code from this respository.
+**Please note: I'm currently a CA of ECE391, and some of our codes were written in a dumb way, i.e. not optimized.  Therefore, I will know if you copy any code from this respository.**
 
 
 
