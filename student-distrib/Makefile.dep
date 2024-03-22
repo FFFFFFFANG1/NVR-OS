@@ -1,0 +1,34 @@
+boot.o: boot.S multiboot.h x86_desc.h types.h
+idt_linkage.o: idt_linkage.S
+x86_desc.o: x86_desc.S x86_desc.h types.h
+ata.o: ata.c ata.h types.h lib.h
+extra_tab.o: extra_tab.c extra_tab.h types.h terminal.h lib.h i8259.h \
+  keyboard.h scheduler.h paging.h x86_desc.h
+file_system.o: file_system.c file_system.h lib.h types.h multiboot.h \
+  systemcall.h x86_desc.h rtc.h idt_linkage.h keyboard.h i8259.h \
+  scheduler.h paging.h terminal.h ata.h
+i8259.o: i8259.c i8259.h types.h lib.h
+idt.o: idt.c idt.h x86_desc.h types.h lib.h idt_linkage.h systemcall.h \
+  file_system.h multiboot.h rtc.h paging.h terminal.h i8259.h keyboard.h \
+  scheduler.h
+kernel.o: kernel.c multiboot.h types.h x86_desc.h lib.h i8259.h debug.h \
+  tests.h paging.h terminal.h keyboard.h scheduler.h idt.h systemcall.h \
+  file_system.h rtc.h idt_linkage.h
+keyboard.o: keyboard.c keyboard.h types.h i8259.h lib.h scheduler.h \
+  paging.h terminal.h x86_desc.h extra_tab.h
+lib.o: lib.c lib.h types.h terminal.h i8259.h keyboard.h scheduler.h \
+  paging.h x86_desc.h rtc.h
+paging.o: paging.c paging.h types.h terminal.h lib.h i8259.h keyboard.h \
+  scheduler.h x86_desc.h
+rtc.o: rtc.c lib.h types.h i8259.h rtc.h
+scheduler.o: scheduler.c scheduler.h types.h lib.h i8259.h paging.h \
+  terminal.h keyboard.h x86_desc.h systemcall.h file_system.h multiboot.h \
+  rtc.h idt_linkage.h
+systemcall.o: systemcall.c systemcall.h lib.h types.h x86_desc.h \
+  file_system.h multiboot.h rtc.h idt_linkage.h keyboard.h i8259.h \
+  scheduler.h paging.h terminal.h
+terminal.o: terminal.c terminal.h types.h lib.h i8259.h keyboard.h \
+  scheduler.h paging.h x86_desc.h
+tests.o: tests.c tests.h x86_desc.h types.h file_system.h lib.h \
+  multiboot.h terminal.h i8259.h keyboard.h scheduler.h paging.h rtc.h \
+  ata.h

@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "pit.h": "c",
+        "systemcall.h": "c",
+        "scheduler.h": "c",
+        "ece391support.h": "c",
+        "ece391syscall.h": "c"
+    }
+}

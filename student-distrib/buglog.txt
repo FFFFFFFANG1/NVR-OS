@@ -1,0 +1,152 @@
+Checkpoint 1:
+
+Junsheng Huang
+1.  bug: the IDT has things in it but the exception won't be called
+    fix: change the lidt(ldt_desc_ptr) into lidt(idt_desc_ptr) (type error!)
+2.  bug: the IDT interrupt is called in a wrong way
+    fix: the exception should use the TRAP gate and the interrupt should use the interrupt gate
+Lishan Shi
+1.  Bug: The screen seems unable to receive RTC interrupts since the sreen is not flickering (characters change between a set).
+    Reason: Unit test is incorrect because it only changes characters once.
+    Solution: Add a "while (1)" loop to wrap the unit test.
+Zixin Zhu
+1.  input_table in keyboard.c: at the beginning I didn't add the null elements in input_table. However, after I check XT scan code, 
+    scan code set 1, I found that, number 1 starts from 0x02. Therefore, I must add two nulls at the beginning to avoid mapping errors. 
+    In this checkpoint, I should go over all the keys in keyboard, so there must be some keys that can't be shown on the screen, so we 
+    substitude them by null.
+2.  include in keyboard,c: I do circular include operations here, since I have already included "types.h", "i8259.h" and "lib.h" in keyboard.h, 
+    so I just need to include keyboard.h in keyboard.c
+
+
+
+
+
+Checkpoint 2:
+
+Junsheng Huang
+1.  bug: the read_data() will lead to page fault
+    fix: change the way we find the inode block we want 
+2.  bug: read_data() will read the wrong data
+    fix: forget to point to the data (use the data_block instead)
+
+Zixin Zhu: terminal.c and keyboard.c
+1. int32_t terminal_read in terminal.c: 20 mins
+   When I try to test this function by a while loop in my test.c, I found that each time it will print the characters that I typed last time. So I realized 
+   that it may come from the keyboard buffer, so I make sure I always clean the buffer and reset input_characters_count each time I call this function.
+
+2. enter_pressed in keyboard: 1.5 hrs
+   This function is designed to handle the case that when enter is pressed. We need to check whether we need to scroll the page according to the y value of
+   the cursor. When we are at the bottom of screen, we must copy the contents of row 1-24 and move them to row 0-23, then add a new line at the end. 
+
+3. backspace_pressed in keyboard.c: 2 hrs
+   At the beginning, there will be page fault, and the cursor may occur at some random place weirdly
+
+4. keyboard_input_handler in keyboard.c: 30 mins
+   I can only type 64 characters at the beginning, so I try to checkk my keyboard_input_handler function. I found that I increment input_characters_count twice.
+
+5. struct terminal_t in terminal.h: 1 hrs
+   When I press backspace, I found that the cursor may occur at random place strangely. Because in terminal_t, I set cursor_x_position and cursor_y_position as 
+unsigned integers initially, but when we are doing backspace, the cursor may change from 0 to 255, but I want it to become -1, so it should be signed integer.
+
+6. enter_pressed in keyboard.c: 1 hrs
+   When I press enter at the beginning, I found that I still have previous characters in my buffer, so I should clean the buffer each time
+   after pressing buffer, so it's ready for use next time.
+
+7. temp_Buffer in terminal.h:2 hrs
+   Because I clean the buffer each time after pressing enter, but in terminal_read, I still need to read from keyboard_buffer to memory buffer.
+   Therefore, I add a temporary buffer, which contains the same thing as keyboard_buffer, but we don't clean it after pressing enter. 
+   In terminal_read, we read from this temporary buffer, then clean it in terminal_read.
+
+8. putc in lib.c: 30 mins
+   When I type some words in my test, the printed words "Read bytes, Write bytes" appears with many empty rows after my typed words. This is because in screen we
+   have two locations, cursor's position and screen's position. So in putc we change all screen location to cursor location.
+
+9. terminal_read in terminal.c: 2 hrs
+   I can only type a word each time, and it will show "read 2 bytes" immediately. That's because in keyboard_input_handler, it should be if (character == '\n' || character ==  '\r') rather than if (character == '\n' || '\r'), or it will always be true.
+
+10. putc in lib.c: 2hrs
+   It can't print all the contents in buffer if I typed more than 80 words, so I have to modify putc in lib.c. I add if (terminal.cursor_x_position == NUM_COLS), we need to reset cursor's location, set x to 0 and let y++.
+   
+11. backspace_pressed in keyboard.c: 15 mins
+   I can't delete the contents in last row if the input characters is more than a row, so I add in this function, if input_characters_count>79, than we can go back to last row and delete the contents
+
+12. keyboard_input_handler in keyboard.c: 1 hrs
+   When I am testing my code, I found that once press backspace, the write bytes is 1 less than read bytes. That's because when I am deleting things, I always delete one more
+characters in the buffer, so I change terminal.keyboard_buffer[input_characters_count] = '\0' to terminal.keyboard_buffer[(input_characters_count+1)] = '\0';
+
+13. tab_pressed in keyboard.c:15 mins
+   When I press type and the cursor go to a new line, I can't delete the things in last row, so that's because I called enter_pressed in tab_pressed. I don't have to call
+enter_pressed, instead I just need to let y++ and x = x % NUM_COLS. Also, if we are at the end of screen and tab must support scrolling the screen as well.
+
+14. rtc_write in rtc.c:
+   The handler is not called and rtc interrupt is stopped. The reason for the error is that I marked code in this function as a critical section.
+   In this case, the counter did not increment and rtc never moved on.
+
+
+Checkpoint 3:
+
+1. bug: page fault when executing shell
+   fix: the pointer we used to read dentry is invalid, we need to use dentry and then get the address of it.
+
+2. bug: page fault when executing shell
+   fix: prog_start_addr need to read in a inverse order
+
+3. bug: page fault when executing shell
+   fix: We have set some floating pointer like dentry* temp
+
+4. bug: page fault when executing shell
+   fix: We use the wrong TSS esp0
+
+5. bug: when we enter the shell and type the command like "ls", it crashed
+   fix：We rewrite the value we pushed when we iret in halt
+
+6. bug: The machine crashed everytime we want to call a system call, regardless of the type of the system call
+   fix: We forgot to add "clobber" to the inline assembly of halt(), and therefore added it.
+
+Checkpoint 4:
+
+1. bug: can't cat frame1.txt for twice
+   fix: add "\0" after the argument so the read won't go to the other place
+
+2. bug: ls and grep can't use for twice
+   fix: set the dir_index to 0 after finish the whole reading
+
+3. bug: grep very, then grep i, grep i print nothing
+   fix: forget to copy the "\0" to the end of buf when using getarg
+
+4. bug: fish can't show up after implementing vidmap()
+   fix: Mistakenly left shift the target virtual address (136MB) in the corresponding page table, therefore cancel the shifting
+         Also, change the set_vidmap() function to return the address of 136MB, rather than directly change screen_start in the argument passed to it.
+
+
+Checkpoint 5:
+1. putc_for_terminal_write in lib.c: 30 mins
+I found that if I run pingpong and counter program, which is moving when it's running, the cursor will appear at the beginning of last row. It's because that when I update cursor, I set it to cur_index, but it actually should be current_terminal_index.
+
+2. keyboard_handler in keyboard.c: 3 hrs
+At the beginning I found that I can't type normally in terminal, it's because putc in keyboard.c and terminal.c are different. They should be written to different terminals. Keyboard should write to current_terminal_index, and terminal should write to current_scheduler_index, so I write another putc for keyboard.
+
+3. multi_vidmap_mapping(): 1 hr
+There is a logical issue in memory mapping for terminal switch, that initially I always copy the backup screen to the corresponding backup screen. To fix this, I add another function to map virtual 0xb8000 directly to physical 0xb8000, which will solve the issue in video memory copying and moving.
+
+4. bug: scheduler logically error
+   fix: change pid counter to pid array so we can get the pid right
+
+5. bug: scheduler jump to the wrong place
+   fix: the get_pcb() is wrong, caculating the wrong address, should use (pid + 1)
+
+6. bug: page fault
+   fix: wrong parent pid for the shell, should be -1
+
+7. bug: page fault
+   fix: wrong halt return (should use the parent pcb's ebp and esp)
+
+8. bug: page fault
+   fix: wrong inline assemble (should add leave ret)
+
+
+
+
+
+
+
