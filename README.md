@@ -5,11 +5,11 @@ The machine needs to run on QEMU or other x86 stimulators. For an online demo an
 
 Please note: I'm currently a CA of ECE391, and some of our codes were written in a dumb way, i.e. not optimized.  Therefore, I will know if you copy any code from this respository.
 
-Introduction from the website:
+Introduction from the website: \n
 This operating system is the 3rd MP of ECE 391 Fall 2023, Computer Systems Engineering,
 Department of Electrical and Computer Engineering, University of Illinois, Urbana-Champaign.
-It was developed by a group of four people (last name in alphabetic order):
-Junzhou Fang;
+It was developed by a group of four people (last name in alphabetic order):\n
+Junzhou Fang; \n
 Junsheng Huang;
 Lishan Shi;a
 Zixin Zhu;
