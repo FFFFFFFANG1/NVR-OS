@@ -12,8 +12,8 @@ Department of Electrical and Computer Engineering, University of Illinois, Urban
 It was developed by a group of four people (last name in alphabetic order):
 Junzhou Fang;
 Junsheng Huang;
-Lishan Shi;a
-Zixin Zhu;
+Lishan Shi;and
+Zixin Zhu.
 
 The website is made and maintained by Junzhou Fang.
 The name of this operating system is taken from the average of each member's name of the group in alphabetic order. We input JZF, JSH, LSS, ZXZ and get the average three letters, NVR.
